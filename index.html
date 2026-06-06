@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anna's Content Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FAF8F4;
+    --sand: #E8DFD0;
+    --taupe: #C4B5A0;
+    --brown: #8B7355;
+    --dark: #3D3530;
+    --accent: #B8956A;
+    --soft-green: #9BAF9B;
+    --text: #4A4035;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--sand);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--dark);
+  }
+
+  header p {
+    font-size: 12px;
+    color: var(--taupe);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* STEP INDICATOR */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 36px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--taupe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--taupe);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .step.active .step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .step.done .step-num {
+    background: var(--soft-green);
+    border-color: var(--soft-green);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 11px;
+    color: var(--taupe);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .step.active .step-label { color: var(--accent); }
+  .step.done .step-label { color: var(--soft-green); }
+
+  .step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+    margin: 0 8px;
+    max-width: 40px;
+  }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .panel-sub {
+    font-size: 14px;
+    color: var(--taupe);
+    font-weight: 300;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* TEMPLATE CARDS */
+  .templates {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .template-card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 12px;
+    padding: 20px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .template-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(184,149,106,0.1);
+  }
+
+  .template-card.selected {
+    border-color: var(--accent);
+    background: #FDF8F2;
+    box-shadow: 0 4px 20px rgba(184,149,106,0.15);
+  }
+
+  .template-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .t1 { background: #FDE8D8; }
+  .t2 { background: #E8EFE8; }
+  .t3 { background: #E8EDF5; }
+
+  .template-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+
+  .template-info p {
+    font-size: 13px;
+    color: var(--taupe);
+    line-height: 1.5;
+  }
+
+  .template-slides {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  /* UPLOAD AREA */
+  .upload-zone {
+    border: 2px dashed var(--taupe);
+    border-radius: 12px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--warm-white);
+    margin-bottom: 20px;
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: #FDF8F2;
+  }
+
+  .upload-zone .upload-icon { font-size: 32px; margin-bottom: 10px; }
+
+  .upload-zone h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .upload-zone p {
+    font-size: 13px;
+    color: var(--taupe);
+    font-weight: 300;
+  }
+
+  #fileInput { display: none; }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .photo-thumb {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    background: var(--sand);
+  }
+
+  .photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-thumb .remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  /* CONTEXT FIELDS */
+  .context-section {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .context-section label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 8px;
+  }
+
+  .context-section input,
+  .context-section textarea {
+    width: 100%;
+    background: var(--cream);
+    border: 1px solid var(--sand);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .context-section input:focus,
+  .context-section textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .context-section textarea { height: 72px; }
+
+  /* TONE CHIPS */
+  .tone-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--sand);
+    font-size: 12px;
+    cursor: pointer;
+    background: var(--cream);
+    color: var(--text);
+    transition: all 0.2s;
+  }
+
+  .chip.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #A07850; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--brown);
+    border: 1.5px solid var(--taupe);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+  }
+
+  .loading.active { display: block; }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--sand);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--taupe);
+  }
+
+  /* OUTPUT */
+  .output-section { display: none; }
+  .output-section.active { display: block; }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .slides-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .slide-card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--sand);
+    background: var(--cream);
+  }
+
+  .slide-label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--taupe);
+    font-weight: 400;
+  }
+
+  .slide-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .slide-body {
+    padding: 16px;
+  }
+
+  .slide-body textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--dark);
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    min-height: 60px;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--sand);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--taupe);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--soft-green); color: var(--soft-green); }
+
+  .caption-section {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .caption-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--sand);
+    background: var(--cream);
+  }
+
+  .caption-label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+
+  .caption-body { padding: 16px; }
+
+  .caption-body textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: var(--dark);
+    line-height: 1.7;
+    resize: none;
+    outline: none;
+    min-height: 100px;
+  }
+
+  .hashtags-body {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--accent);
+    line-height: 1.8;
+    word-break: break-all;
+  }
+
+  .start-over {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--sand);
+  }
+
+  .start-over button {
+    background: none;
+    border: none;
+    color: var(--taupe);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Lato', sans-serif;
+  }
+
+  /* TEMPLATE BADGE */
+  .selected-template-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--brown);
+    margin-bottom: 20px;
+  }
+
+  /* Error */
+  .error-msg {
+    background: #FDF0EE;
+    border: 1px solid #E8C4BC;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #8B3A30;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">✦</div>
+  <div>
+    <h1>Content Studio</h1>
+    <p>by Anna Ross</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- STEP INDICATOR -->
+  <div class="steps">
+    <div class="step active" id="s1">
+      <div class="step-num">1</div>
+      <div class="step-label">Template</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s2">
+      <div class="step-num">2</div>
+      <div class="step-label">Photos</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s3">
+      <div class="step-num">3</div>
+      <div class="step-label">Context</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s4">
+      <div class="step-num">4</div>
+      <div class="step-label">Content</div>
+    </div>
+  </div>
+
+  <!-- PANEL 1: TEMPLATE -->
+  <div class="panel active" id="panel1">
+    <h2 class="panel-title">Choose a template</h2>
+    <p class="panel-sub">Pick the format that fits what you want to share today.</p>
+
+    <div class="templates">
+      <div class="template-card" onclick="selectTemplate(0)">
+        <div class="template-icon t1">✨</div>
+        <div class="template-info">
+          <h3>Things That Changed My…</h3>
+          <p>A list of habits, shifts, or small things that made a big difference. Honest and relatable.</p>
+          <div class="template-slides">5–7 slides · List format</div>
+        </div>
+      </div>
+
+      <div class="template-card" onclick="selectTemplate(1)">
+        <div class="template-icon t2">🌿</div>
+        <div class="template-info">
+          <h3>Quote + Story</h3>
+          <p>One thought, one truth — expanded with your personal story. Great for connection and saves.</p>
+          <div class="template-slides">4–6 slides · Reflective format</div>
+        </div>
+      </div>
+
+      <div class="template-card" onclick="selectTemplate(2)">
+        <div class="template-icon t3">☀️</div>
+        <div class="template-info">
+          <h3>Day in My Life</h3>
+          <p>A quiet, chronological window into your day. The small moments that matter.</p>
+          <div class="template-slides">6–8 slides · Chronological format</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn1" onclick="goTo(2)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: PHOTOS -->
+  <div class="panel" id="panel2">
+    <h2 class="panel-title">Add your photos</h2>
+    <p class="panel-sub">Upload the images for this carousel. You can add up to 10.</p>
+
+    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📷</div>
+      <h3>Tap to add photos</h3>
+      <p>or drag and drop here</p>
+    </div>
+    <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(this.files)">
+
+    <div class="photo-grid" id="photoGrid"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: CONTEXT -->
+  <div class="panel" id="panel3">
+    <h2 class="panel-title">A little context</h2>
+    <p class="panel-sub">Help the AI capture your voice and what this post is about.</p>
+
+    <div class="context-section">
+      <label>What is this post about?</label>
+      <textarea id="topicInput" placeholder="e.g. My slow Sunday morning — the kids were still asleep and I finally had a quiet cup of tea…"></textarea>
+    </div>
+
+    <div class="context-section">
+      <label>Any specific details to include?</label>
+      <textarea id="detailsInput" placeholder="e.g. Mentioned switching phones off before 9am, reading instead of scrolling, the effect on my mood…"></textarea>
+    </div>
+
+    <div class="context-section">
+      <label>Tone for this post</label>
+      <div class="tone-chips">
+        <div class="chip selected" onclick="toggleChip(this)">Warm</div>
+        <div class="chip selected" onclick="toggleChip(this)">Honest</div>
+        <div class="chip" onclick="toggleChip(this)">Inspiring</div>
+        <div class="chip" onclick="toggleChip(this)">Gentle</div>
+        <div class="chip" onclick="toggleChip(this)">Reflective</div>
+        <div class="chip" onclick="toggleChip(this)">Playful</div>
+        <div class="chip" onclick="toggleChip(this)">Vulnerable</div>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">Something went wrong. Please check your connection and try again.</div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">✦ Generate content</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Writing your content…</p>
+  </div>
+
+  <!-- PANEL 4: OUTPUT -->
+  <div class="output-section" id="panel4">
+    <div class="output-header">
+      <h2 class="panel-title" style="margin:0">Your content</h2>
+      <button class="btn btn-secondary" onclick="copyAll()">Copy all</button>
+    </div>
+
+    <div id="selectedTemplateBadge" class="selected-template-badge"></div>
+
+    <div class="slides-container" id="slidesContainer"></div>
+
+    <div class="caption-section">
+      <div class="caption-header">
+        <div class="caption-label">📝 Caption</div>
+        <button class="copy-btn" onclick="copyField('captionText', this)">Copy</button>
+      </div>
+      <div class="caption-body">
+        <textarea id="captionText" rows="5"></textarea>
+      </div>
+    </div>
+
+    <div class="caption-section">
+      <div class="caption-header">
+        <div class="caption-label"># Hashtags</div>
+        <button class="copy-btn" onclick="copyField('hashtagsText', this)">Copy</button>
+      </div>
+      <div class="hashtags-body" id="hashtagsText"></div>
+    </div>
+
+    <div class="start-over">
+      <button onclick="startOver()">Create another post</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const templates = [
+  {
+    name: "Things That Changed My…",
+    icon: "✨",
+    prompt: (topic, details, tone) => `You are a content writer for Anna Ross, a slow living and motherhood Instagram creator. Her voice is warm, honest, and grounded — she's a mum of 3, originally from Russia, living in Kent UK. She left a corporate career at Shell to focus on family and meaningful living. She writes like she's talking to a friend, never preachy or performative.
+
+Create an Instagram carousel in the "Things That Changed My [X]" format.
+
+Topic: ${topic}
+Extra details: ${details || "none"}
+Tone: ${tone}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "slides": [
+    {"label": "Cover", "text": "hook title for the carousel"},
+    {"label": "Intro", "text": "1-2 sentence personal opener"},
+    {"label": "Thing 1", "text": "short, specific point"},
+    {"label": "Thing 2", "text": "short, specific point"},
+    {"label": "Thing 3", "text": "short, specific point"},
+    {"label": "Thing 4", "text": "short, specific point"},
+    {"label": "Close", "text": "warm closing thought + gentle CTA"}
+  ],
+  "caption": "full Instagram caption, 150-200 words, Anna's voice, ends with a question to followers",
+  "hashtags": "20-25 relevant hashtags as a single string"
+}`
+  },
+  {
+    name: "Quote + Story",
+    icon: "🌿",
+    prompt: (topic, details, tone) => `You are a content writer for Anna Ross, a slow living and motherhood Instagram creator. Her voice is warm, honest, and grounded — she's a mum of 3, originally from Russia, living in Kent UK. She left a corporate career at Shell to focus on family and meaningful living.
+
+Create an Instagram carousel in the "Quote + Story" format — one meaningful thought expanded into a personal story.
+
+Topic: ${topic}
+Extra details: ${details || "none"}
+Tone: ${tone}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "slides": [
+    {"label": "Quote", "text": "powerful opening quote or statement (Anna's own words, not attributed to anyone else)"},
+    {"label": "Context", "text": "where this thought came from — a moment, a feeling"},
+    {"label": "The shift", "text": "what changed or what she realised"},
+    {"label": "Real life", "text": "what this looks like in daily life with kids/family"},
+    {"label": "For you", "text": "gentle reflection or question for the reader"},
+    {"label": "Close", "text": "warm sign-off + save this if it resonated"}
+  ],
+  "caption": "full Instagram caption, 150-200 words, conversational, ends with a question",
+  "hashtags": "20-25 relevant hashtags as a single string"
+}`
+  },
+  {
+    name: "Day in My Life",
+    icon: "☀️",
+    prompt: (topic, details, tone) => `You are a content writer for Anna Ross, a slow living and motherhood Instagram creator. Her voice is warm, honest, and grounded — she's a mum of 3, originally from Russia, living in Kent UK.
+
+Create an Instagram carousel in the "Day in My Life" format — intimate, real, chronological.
+
+Topic: ${topic}
+Extra details: ${details || "none"}
+Tone: ${tone}
+
+Return ONLY valid JSON, no markdown, no explanation:
+{
+  "slides": [
+    {"label": "Cover", "text": "inviting title like 'A slow Sunday with us'"},
+    {"label": "Morning", "text": "first thing — quiet, honest, specific"},
+    {"label": "Mid morning", "text": "a real moment with the kids or home"},
+    {"label": "Midday", "text": "food, activity, or something unexpected"},
+    {"label": "Afternoon", "text": "a quiet or chaotic moment"},
+    {"label": "Evening", "text": "winding down — what this time feels like"},
+    {"label": "Reflection", "text": "one true thing about this kind of day"},
+    {"label": "Close", "text": "warm close + question to followers"}
+  ],
+  "caption": "full Instagram caption, 150-200 words, reads like a diary entry, ends with a question",
+  "hashtags": "20-25 relevant hashtags as a single string"
+}`
+  }
+];
+
+let selectedTemplate = null;
+let uploadedPhotos = [];
+let currentStep = 1;
+
+function selectTemplate(i) {
+  selectedTemplate = i;
+  document.querySelectorAll('.template-card').forEach((c,j) => {
+    c.classList.toggle('selected', j === i);
+  });
+  document.getElementById('btn1').disabled = false;
+}
+
+function goTo(step) {
+  currentStep = step;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('loading').classList.remove('active');
+  document.getElementById('panel4').classList.remove('active');
+
+  if (step <= 3) {
+    document.getElementById('panel' + step).classList.add('active');
+  }
+
+  // Update step indicators
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('s' + i);
+    el.classList.remove('active', 'done');
+    if (i === step) el.classList.add('active');
+    else if (i < step) el.classList.add('done');
+  }
+}
+
+function handleFiles(files) {
+  Array.from(files).slice(0, 10 - uploadedPhotos.length).forEach(file => {
+    const url = URL.createObjectURL(file);
+    uploadedPhotos.push(url);
+  });
+  renderPhotos();
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = uploadedPhotos.map((url, i) => `
+    <div class="photo-thumb">
+      <img src="${url}" alt="Photo ${i+1}">
+      <div class="remove" onclick="removePhoto(${i})">×</div>
+    </div>
+  `).join('');
+}
+
+function removePhoto(i) {
+  uploadedPhotos.splice(i, 1);
+  renderPhotos();
+}
+
+// Drag and drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+function getTone() {
+  return Array.from(document.querySelectorAll('.chip.selected')).map(c => c.textContent).join(', ') || 'warm and honest';
+}
+
+async function generateContent() {
+  const topic = document.getElementById('topicInput').value.trim();
+  const details = document.getElementById('detailsInput').value.trim();
+  const tone = getTone();
+  const errorEl = document.getElementById('errorMsg');
+  errorEl.classList.remove('show');
+
+  if (!topic) {
+    document.getElementById('topicInput').focus();
+    return;
+  }
+
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('panel3').classList.remove('active');
+  document.getElementById('loading').classList.add('active');
+
+  const s4 = document.getElementById('s4');
+  s4.classList.remove('done');
+  s4.classList.add('active');
+
+  const prompt = templates[selectedTemplate].prompt(topic, details, tone);
+
+  try {
+    const res = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content[0].text;
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    renderOutput(parsed);
+
+  } catch(e) {
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('panel3').classList.add('active');
+    errorEl.classList.add('show');
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+function renderOutput(data) {
+  document.getElementById('loading').classList.remove('active');
+
+  // Badge
+  const t = templates[selectedTemplate];
+  document.getElementById('selectedTemplateBadge').innerHTML = `${t.icon} ${t.name}`;
+
+  // Slides
+  const container = document.getElementById('slidesContainer');
+  container.innerHTML = data.slides.map((slide, i) => `
+    <div class="slide-card" style="animation-delay:${i * 0.08}s">
+      <div class="slide-header">
+        <div class="slide-label">${slide.label}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="slide-num">Slide ${i + 1}</div>
+          <button class="copy-btn" onclick="copyField('slide${i}', this)">Copy</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <textarea id="slide${i}" oninput="autoResize(this)">${slide.text}</textarea>
+      </div>
+    </div>
+  `).join('');
+
+  // Caption
+  document.getElementById('captionText').value = data.caption;
+
+  // Hashtags
+  document.getElementById('hashtagsText').textContent = data.hashtags;
+
+  // Show output
+  document.getElementById('panel4').classList.add('active');
+
+  // Update steps
+  for (let i = 1; i <= 3; i++) document.getElementById('s'+i).classList.add('done');
+  document.getElementById('s4').classList.remove('active');
+  document.getElementById('s4').classList.add('done');
+
+  // Auto-resize textareas
+  setTimeout(() => {
+    document.querySelectorAll('.slide-body textarea, .caption-body textarea').forEach(autoResize);
+  }, 100);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+async function copyField(id, btn) {
+  const el = document.getElementById(id);
+  const text = el ? (el.tagName === 'TEXTAREA' ? el.value : el.textContent) : '';
+  await navigator.clipboard.writeText(text);
+  if (btn) {
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }
+}
+
+async function copyAll() {
+  const slides = Array.from(document.querySelectorAll('.slide-body textarea'))
+    .map((t, i) => `Slide ${i+1}: ${t.value}`).join('\n\n');
+  const caption = document.getElementById('captionText').value;
+  const hashtags = document.getElementById('hashtagsText').textContent;
+  const all = `${slides}\n\n---\nCAPTION:\n${caption}\n\n---\nHASHTAGS:\n${hashtags}`;
+  await navigator.clipboard.writeText(all);
+}
+
+function startOver() {
+  selectedTemplate = null;
+  uploadedPhotos = [];
+  document.getElementById('topicInput').value = '';
+  document.getElementById('detailsInput').value = '';
+  document.getElementById('photoGrid').innerHTML = '';
+  document.getElementById('generateBtn').disabled = false;
+  document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.chip')[0].classList.add('selected');
+  document.querySelectorAll('.chip')[1].classList.add('selected');
+  document.getElementById('panel4').classList.remove('active');
+  document.getElementById('btn1').disabled = true;
+  goTo(1);
+}
+</script>
+</body>
+</html>
